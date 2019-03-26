@@ -24,10 +24,10 @@ def printProductsByAllergen(allergen) :
     for prod in products :
         print("==========================================================")
         print("################## PRODUIT SUIVANT ##################")
-        for key,value in prod.items() :
-            print(key + ":", value)
+        # for key,value in prod.items() :
+        #     print(key + ":", value)
+        print(prod['product_name'])
         print("==========================================================")
-        break
 
 
 def printProducts(country) :
@@ -44,9 +44,10 @@ def printProducts(country) :
 
 def main() :
     country = "fr"
+    spec    = "fr:lait-de-savoie"
     #printAllergens(country)
     #printProducts(country)
-    printProductsByAllergen("fr:preparation-de-fromage-fondu")
+    printProductsByAllergen(spec)
 
 
 
