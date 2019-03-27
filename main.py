@@ -36,8 +36,14 @@ def printProducts(country) :
     PARAM country : code pays
     """
     products = openFF.products.get_by_language("fr")
-    for key,value in products[0].items() :
-        print(key + ":", value)
+    for prod in products :
+        print("==========================================================")
+        print("################## PRODUIT SUIVANT ##################")
+        for key,value in prod.items() :
+            print(key + ":", value)
+        # print(prod['product_name'])
+        # print(prod['id'])
+        print("==========================================================")
 
 
 
@@ -46,8 +52,8 @@ def main() :
     country = "fr"
     spec    = "fr:lait-de-savoie"
     #printAllergens(country)
-    #printProducts(country)
-    printProductsByAllergen(spec)
+    printProducts(country)
+    #printProductsByAllergen(spec)
 
 
 
