@@ -134,19 +134,23 @@ class NoAllergenProducts :
 
 
 
-    def writeCsv(self, df) :
+    def toCsv(self, df) :
         """
-        Ecrit dans un CSV les champs des produits non
+        Converti en CSV les champs (et leurs indexes) des produits non
         concernes par les allergenes specifies
         PARAM df : DataFrame des donnees a ecrire
         """
-        pass
+        ret = df.to_csv()
+        return ret
 
 
-    def writeExcel(self, df) :
+
+    def toExcel(self, df, filename, sheetname) :
         """
-        Ecrit dans un Excel les champs des produits non
+        Converti en Excel les champs (et leurs indexes) des produits non
         concernes par les allergenes specifies
         PARAM df : DataFrame des donnees a ecrire
+        PARAM filename : nom du fichier excel
+        PARAM sheetname : nom de la feuille excel ou l'on ecrit les donnees
         """
-        pass
+        df.to_excel(filename, sheetname)
