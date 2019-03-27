@@ -19,8 +19,6 @@ class NoAllergenProducts :
         ATTRIBUTE allergenProds : liste des noms des produits contenant les allergenes specifies
         """
         self.allergens     = _allergen
-        self.allergenProds = []
-
 
 
     def getAllergens(self, country) :
@@ -33,7 +31,7 @@ class NoAllergenProducts :
         allerg = openFF.facets.get_allergens()                    # allergenes disponibles
         country += ":"
         for prod in allerg :
-            id = prod['id']                                       # id de chaque allergene
+            id = prod['product_name']                                       # id de chaque allergene
             if country in id :                                    # si le code pays correspond a l'allergene
                 toAppend = id.split(':')[1].replace('-', ' ')     # formatage str (code pays et - en moins)
                 ret.append(toAppend)                              # on recupere le nom de l'allergene
@@ -44,21 +42,21 @@ class NoAllergenProducts :
 
     def getAllProds(self, country) :
         """
-        Retourne la liste de tous les id prduits
+        Retourne la liste de tous les noms des produits
         selon le pays
         PARAM country : code pays
         """
         ret = []
         products = openFF.products.get_by_language("fr")
         for prod in products :
-            ret.append(prod['id'])
+            ret.append(prod['product_name'])
 
         return ret
 
 
     def getAllergenProds(self) :
         """
-        Retourne la liste des id produits contenant
+        Retourne la liste des noms des produits contenant
         le ou les allergenes specifies
         RETURN type : list[<string>]
         """
@@ -66,7 +64,7 @@ class NoAllergenProducts :
         for allergen in self.allergens :
             products = openFF.products.get_by_allergen(allergen)
             for prod in products :
-                ret.append(prod['id'])
+                ret.append(prod['product_name'])
 
         return ret
 
