@@ -1,4 +1,5 @@
 import openfoodfacts as openFF
+from AllergenFoodControl import AllergenFoodControl
 
 
 
@@ -13,21 +14,6 @@ def printAllergens(country) :
         if country in prod['name'] :
             print(prod)
 
-
-def printProductsByAllergen(allergen) :
-    """
-    Affiche les produits contenant
-    l'allergene specifique
-    PARAM allergen : id de l'allergene
-    """
-    products = openFF.products.get_by_allergen(allergen)
-    for prod in products :
-        print("==========================================================")
-        print("################## PRODUIT SUIVANT ##################")
-        # for key,value in prod.items() :
-        #     print(key + ":", value)
-        print(prod['product_name'])
-        print("==========================================================")
 
 
 def printProducts(country) :
@@ -47,13 +33,64 @@ def printProducts(country) :
 
 
 
+def getAllergens(country) :
+    """
+    Retourne la liste des noms de tous les
+    allergenes disponibles selon le pays
+    PARAM country : code pays
+    """
+    ret = []
+    allerg = openFF.facets.get_allergens()      # allergenes disponibles
+    country += ":"
+    for prod in allerg :
+        id = prod['id']
+        if country in id :                      # si l'allergene est disponible dans la langue du pays specifie
+            toAppend = id.split(':')[1]         # formatage str (enlever le code pays)
+            ret.append(toAppend)                # on recupere le nom de l'allergene
+
+    return ret
+
+
+
+#__________MAIN__________
 
 def main() :
     country = "fr"
-    spec    = "fr:lait-de-savoie"
+    spec    = getAllergens(country)
+
+
+    #======================================================================
+    #   FONCTIONS DE TEST
+    #======================================================================
     #printAllergens(country)
-    printProducts(country)
-    #printProductsByAllergen(spec)
+    #printProducts(country)
+
+
+    #======================================================================
+    #   CLASSE NoAllergenProducts
+    #======================================================================
+    AFC = AllergenFoodControl(spec)
+
+    # PRODUITS CONTENANT LES ALLERGENES SPECIFIES
+    # AllergenProds = AFC.getAllergenProds()
+    # for prod in AllergenProds :
+    #     print(prod)
+
+
+    #======================================================================
+    #   TESTS AVEC LA CLASSE AllergenFoodControl
+    #======================================================================
+    # CONVERSION EN DATAFRAME
+    # testDF = [  {'nom' : 'Clément', 'formation' : 'IDU'},
+    #             {'nom' : 'Maxime',  'formation' : 'IAI'},
+    #             {'nom' : 'July',    'formation' : 'MM' }  ]
+    # df = AFC.toDataFrame(testDF)
+    # print(df)
+    #
+    # # FICHIER CSV OU EXCEL
+    # AFC.toExcel(df, "Etudiants.xlsx", "Polytech")
+
+
 
 
 
