@@ -15,12 +15,12 @@ class AllergenFoodControl :
     sur les produits allergenes
     """
 
-    def __init__(self, _allergens = []) :
+    def __init__(self, _allergen) :
         """
         CONSTRUCTEUR de la classe AllergenFoodControl
         ATTRIBUTE allergen : liste des allergenes specifies par l'utilisateur
         """
-        self.allergens = _allergens
+        self.allergen = _allergen
 
 
 
@@ -33,7 +33,8 @@ class AllergenFoodControl :
         ret = []
         products = openFF.products.get_by_language("fr")
         for prod in products :
-            ret.append(prod)
+            #if 'product_name' in prod.keys() :                  # Apparemment, ce champ n'existe pas pour tous les produits
+            ret.append(prod['product_name'])
 
         return ret
 
@@ -46,26 +47,25 @@ class AllergenFoodControl :
         RETURN type : list[string]
         """
         ret = []
-        for allergen in self.allergens :
-            products = openFF.products.get_by_allergen(allergen)
-            for prod in products :
-                ret.append(prod)
+        products = openFF.products.get_by_allergen(self.allergen)
+        for prod in products :
+            ret.append(prod['product_name'])
 
         return ret
 
 
 
-    # def getNoAllergen(self, country) :
-    #     """
-    #     Recupere la liste des noms des produits ne contenant
-    #     pas les allergenes specificies
-    #     PARAM country : code pays
-    #     """
-    #     allergenProds   = set(self.getAllergenProdsName())     # produits allergenes cast en set
-    #     allProds        = set(self.getAllProdsName(country))   # tous les produits selon le pays cast en set
-    #     ret             = list(allProds - allergenProds)       # liste des produits non allergenes
-    #
-    #     return ret
+    def getNoAllergen(self, country) :
+        """
+        Recupere la liste des noms des produits ne contenant
+        pas les allergenes specificies
+        PARAM country : code pays
+        """
+        allergenProds   = set(self.getAllergenProds())         # produits allergenes cast en set
+        allProds        = set(self.getAllProds(country))       # tous les produits selon le pays cast en set
+        ret             = list(allProds - allergenProds)       # liste des produits non allergenes
+
+        return ret
 
 
 
@@ -77,16 +77,20 @@ class AllergenFoodControl :
         RETURN TYPE : list[dict]
         """
         ret  = []
-        # temp = {}
+        temp = {}
         products   = openFF.products.get_by_language(country)     # Tous les produits selon le pays
-        noAllergen = self.getNoAllergenName(country)              # Tous les produits non allergen (specifiques) selon le pays
+        noAllergen = self.getNoAllergen(country)                  # Tous les produits non allergen (specifiques) selon le pays
 
         for prod in products :
             for noAl in noAllergen :
-                if prod['product_name'] == noAl :
-                    # temp = {'id' : prod['id'],
-                    #         'name' : prod['product_name']}
-                    ret.append(prod)
+                if noAl in prod['product_name'] :                 # Apparemment, ce champ n'existe pas pour tous les produits
+                    temp = {'id'                   : prod['id'],
+                            'name'                 : prod['product_name'],
+                            'brand'                : prod['brands'],
+                            'ingredients'          : prod['ingredients'],
+                            'ingredients_allergen' : prod['allergens_from_ingredients'],
+                            'url'                  : prod['url']}
+                    ret.append(temp)
 
         return ret
 
@@ -103,23 +107,22 @@ class AllergenFoodControl :
 
 
 
-    # def toJSON(self, df) :
-    #     """
-    #     Converti le DataFrame en format JSON
-    #     """
-    #     ret = json.dumps(df, indent=4)
-    #     return ret
+    def toJSON(self, df) :
+        """
+        Converti le DataFrame en format JSON
+        """
+        ret = json.dumps(df, indent=4)
+        return ret
 
 
 
-    def toCsv(self, df) :
+    def toCsv(self, df, filename) :
         """
         Converti en CSV les champs (et leurs indexes) des produits non
         concernes par les allergenes specifies
         PARAM df : DataFrame des donnees a ecrire
         """
-        ret = df.to_csv()
-        return ret
+        df.to_csv(filename, encoding='utf-8', index = False)
 
 
 

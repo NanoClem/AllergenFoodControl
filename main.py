@@ -23,12 +23,9 @@ def printProducts(country) :
     """
     products = openFF.products.get_by_language("fr")
     for prod in products :
-        print("==========================================================")
         print("################## PRODUIT SUIVANT ##################")
-        for key,value in prod.items() :
-            print(key + ":", value)
-        # print(prod['product_name'])
-        # print(prod['id'])
+        print(prod['product_name'])
+        print(prod['id'])
         print("==========================================================")
 
 
@@ -52,47 +49,36 @@ def getAllergens(country) :
 
 
 
+
 #__________MAIN__________
 
 def main() :
-    country = "fr"
-    spec    = getAllergens(country)
 
-
-    #======================================================================
-    #   FONCTIONS DE TEST
-    #======================================================================
-    #printAllergens(country)
-    #printProducts(country)
-
+    country     = "fr"   # code pays
+    spec        = input("Quel allergène voulez-vous éviter ?  > ")
 
     #======================================================================
     #   CLASSE NoAllergenProducts
     #======================================================================
     AFC = AllergenFoodControl(spec)
-
-    # PRODUITS CONTENANT LES ALLERGENES SPECIFIES
-    # AllergenProds = AFC.getAllergenProds()
-    # for prod in AllergenProds :
-    #     print(prod)
-
+    NoAllergenProds = AFC.getNoAllergenProds(country)  # produits sans les allergènes
 
     #======================================================================
-    #   TESTS AVEC LA CLASSE AllergenFoodControl
+    #   DATAFRAME ET CSV
     #======================================================================
-    # CONVERSION EN DATAFRAME
-    # testDF = [  {'nom' : 'Clément', 'formation' : 'IDU'},
-    #             {'nom' : 'Maxime',  'formation' : 'IAI'},
-    #             {'nom' : 'July',    'formation' : 'MM' }  ]
-    # df = AFC.toDataFrame(testDF)
-    # print(df)
-    #
-    # # FICHIER CSV OU EXCEL
-    # AFC.toExcel(df, "Etudiants.xlsx", "Polytech")
+    foodDF = AFC.toDataFrame(NoAllergenProds)
+    AFC.toExcel(foodDF, "Safe_Products.csv", "products")    # Conversion Excel
+    #AFC.toCsv(foodDF, "Safe_Products.csv")
+
 
 
 
 
 
 if __name__ == '__main__':
+
+    # FONCTIONS DE TEST
+    # printAllergens("fr")
+    # printProducts("fr")
+
     main()
